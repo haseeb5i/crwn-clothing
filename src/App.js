@@ -24,13 +24,11 @@ class App extends React.Component {
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async (user) => {
       if (user) {
         const userRef = await createUser(user);
+        // why subscribing to to snapshot?
         userRef.onSnapshot((snapshot) => {
-          this.setState(
-            {
-              currentUser: { id: snapshot.id, ...snapshot.data() },
-            },
-            () => console.log(this.state.currentUser)
-          );
+          this.setState({
+            currentUser: { id: snapshot.id, ...snapshot.data() },
+          });
         });
       } else {
         this.setState({ currentUser: null });
@@ -48,7 +46,13 @@ class App extends React.Component {
         <Header currentUser={this.state.currentUser} />
         <Route path="/" component={HomePage} exact />
         <Route path="/shop" component={ShopPage} exact />
-        <Route path="/signin" component={SignIn} exact />
+        <Route
+          path="/signin"
+          component={(props) => (
+            <SignIn {...props} currentUser={this.state.currentUser} />
+          )}
+          exact
+        />
         <Route path="/signup" component={SignUp} exact />
       </div>
     );

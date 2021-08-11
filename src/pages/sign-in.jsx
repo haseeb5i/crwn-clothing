@@ -1,23 +1,34 @@
 import { useState } from "react";
 import FormInput from "../components/form-input";
 import CustomButton from "../components/custom-button";
-import { signInWithGoogle } from "../firebase/firebase.util";
+import { auth, signInWithGoogle } from "../firebase/firebase.util";
+import { Redirect } from "react-router";
 import "./sign-in.scss";
 
-const SignIn = () => {
+const SignIn = ({currentUser}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      await auth.signInWithEmailAndPassword(email, password)
+    }
+    catch (error) {
+      console.error(error);
+    }
     setEmail("");
     setPassword("");
   };
 
   const handleChange = (e) => {
-    if (e.target.name === "username") setEmail(e.target.value);
+    if (e.target.name === "email") setEmail(e.target.value);
     if (e.target.name === "password") setPassword(e.target.value);
   };
+
+  if (currentUser) {
+    return <Redirect to="/" />
+  }
 
   return (
     <div className="sign-in">
@@ -28,7 +39,7 @@ const SignIn = () => {
           handleChange={handleChange}
           label="Email"
           type="email"
-          name="username"
+          name="email"
           value={email}
           required
         />

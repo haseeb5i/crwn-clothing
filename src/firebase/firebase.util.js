@@ -18,6 +18,7 @@ if (firebase.apps.length === 0) {
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 export const createUser = async (userAuth, options) => {
+  // maybe an unneccessary check
   if (!userAuth) return;
   const userRef = firestore.doc(`users/${userAuth.uid}`);
   const user = await userRef.get();
