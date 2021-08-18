@@ -2,10 +2,12 @@ import "./header.scss";
 import { Link } from "react-router-dom";
 import { auth } from "../firebase/firebase.util";
 import { connect } from "react-redux";
-
+import { createStructuredSelector } from "reselect";
 import logo from "../assets/crown.svg";
 import CartIcon from "./cart-icon";
 import CartDropdown from "./cart-dropdown";
+import { selectCartHidden } from "../redux/cart/cart.selectors";
+import { selectCurrentUser } from "../redux/user/user.selector";
 
 const Header = ({ currentUser, hidden }) => {
   return (
@@ -41,10 +43,10 @@ const Header = ({ currentUser, hidden }) => {
   );
 };
 
-// this will help us to access the state from store/state
-const mapStateToProps = ({ user: { currentUser }, cart: { hidden } }) => ({
-  currentUser,
-  hidden,
+// createStructuredSelector will automatically pass state to all selector
+const mapStateToProps = createStructuredSelector ({
+  currentUser: selectCurrentUser,
+  hidden: selectCartHidden 
 });
 
 export default connect(mapStateToProps)(Header);
