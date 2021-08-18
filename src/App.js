@@ -1,37 +1,29 @@
 import "./App.css";
 import HomePage from "./pages/homepage";
-import { Route } from "react-router-dom";
+import { Redirect, Route } from "react-router-dom";
 import ShopPage from "./pages/shop";
 import Header from "./components/header";
-// import SignInAndSignUpPage from "./pages/sign-in-and-sign-up";
 import SignIn from "./pages/sign-in";
 import SignUp from "./pages/sign-up";
 import { auth, createUser } from "./firebase/firebase.util";
+import { connect } from "react-redux";
+import { setCurrentUser } from "./redux/user/user.action";
 import React from "react";
-// import React, { useEffect, useRef, useState } from "react";
 
 class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      currentUser: null,
-    };
-  }
-
   unsubscribeFromAuth = null;
 
   componentDidMount() {
+    const { setCurrentUser } = this.props;
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async (user) => {
       if (user) {
         const userRef = await createUser(user);
         // why subscribing to to snapshot?
         userRef.onSnapshot((snapshot) => {
-          this.setState({
-            currentUser: { id: snapshot.id, ...snapshot.data() },
-          });
+          setCurrentUser({ id: snapshot.id, ...snapshot.data() });
         });
       } else {
-        this.setState({ currentUser: null });
+        setCurrentUser(user);
       }
     });
   }
@@ -43,14 +35,14 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <Header currentUser={this.state.currentUser} />
+        <Header />
         <Route path="/" component={HomePage} exact />
         <Route path="/shop" component={ShopPage} exact />
         <Route
           path="/signin"
-          component={(props) => (
-            <SignIn {...props} currentUser={this.state.currentUser} />
-          )}
+          render={() =>
+            this.props.currentUser ? <Redirect to="/" /> : <SignIn />
+          }
           exact
         />
         <Route path="/signup" component={SignUp} exact />
@@ -59,4 +51,14 @@ class App extends React.Component {
   }
 }
 
-export default App;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+  };
+};
+
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

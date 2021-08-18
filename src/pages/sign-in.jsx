@@ -2,10 +2,9 @@ import { useState } from "react";
 import FormInput from "../components/form-input";
 import CustomButton from "../components/custom-button";
 import { auth, signInWithGoogle } from "../firebase/firebase.util";
-import { Redirect } from "react-router";
 import "./sign-in.scss";
 
-const SignIn = ({currentUser}) => {
+const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -25,10 +24,6 @@ const SignIn = ({currentUser}) => {
     if (e.target.name === "email") setEmail(e.target.value);
     if (e.target.name === "password") setPassword(e.target.value);
   };
-
-  if (currentUser) {
-    return <Redirect to="/" />
-  }
 
   return (
     <div className="sign-in">
