@@ -4,6 +4,7 @@ const INITIAL_CART_STATE = {
 };
 
 const cartReducer = (state = INITIAL_CART_STATE, action) => {
+  let itemId, itemCopy;
   switch (action.type) {
     case "TOGGLE_CART_HIDDEN":
       return {
@@ -11,19 +12,37 @@ const cartReducer = (state = INITIAL_CART_STATE, action) => {
         hidden: !state.hidden,
       };
     case "ADD_TO_CART":
-      const itemId = action.payload.id;
-      let tmp;
+      itemId = action.payload.id;
       if (state.cartItems[itemId] === undefined) {
-        tmp = { ...action.payload, quantity: 1 };
+        itemCopy = { ...action.payload, quantity: 1 };
       } else {
-        tmp = state.cartItems[itemId];
-        tmp.quantity += 1;
+        itemCopy = {...state.cartItems[itemId]};
+        itemCopy.quantity += 1;
       }
-
       return {
         ...state,
-        cartItems: { ...state.cartItems, ...{ [itemId]: tmp } },
+        cartItems: { ...state.cartItems, ...{ [itemId]: itemCopy } },
       };
+    case "CLEAR_ITEM_FROM_CART":
+      itemId = action.payload.id;
+      const cartItemsCopy = state.cartItems;
+      delete cartItemsCopy[itemId];
+      return {
+        ...state,
+        cartItems: { ...cartItemsCopy },
+      };
+    case "REMOVE_FROM_CART":
+      itemId = action.payload.id;
+      // dont do this, it will not change the state, as object is same odl
+      // itemCopy = state.cartItems[itemId];
+      itemCopy = {...state.cartItems[itemId]};
+      if (itemCopy.quantity > 1) 
+        itemCopy.quantity -= 1;
+      return {
+        ...state,
+        cartItems: { ...state.cartItems, ...{ [itemId]: itemCopy } },
+      };
+
     default:
       return state;
   }
