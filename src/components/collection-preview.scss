@@ -5,11 +5,13 @@
 
   .title {
     font-size: 28px;
+    margin-left: 50px;
     margin-bottom: 25px;
   }
 
   .preview {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
   }
 }

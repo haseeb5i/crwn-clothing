@@ -1,12 +1,9 @@
 import MenuItem from "./menu-item";
 import "./menu-container.scss";
-// import { useState } from "react";
-import * as data from "./menu-container.data";
+import { connect } from "react-redux";
+import { selectDirectorySections } from "../redux/directory/directory.selector";
 
-
-const MenuContainer = () => {
-  // const [sections, setSections] = useState(data.default);
-  const sections = data.default;
+const MenuContainer = ({ sections }) => {
   return (
     <div className="menu-container">
       {sections.map((section) => (
@@ -22,4 +19,8 @@ const MenuContainer = () => {
   );
 };
 
-export default MenuContainer;
+const mapStateToProps = (state) => ({
+  sections: selectDirectorySections(state)
+});
+
+export default connect(mapStateToProps)(MenuContainer);
