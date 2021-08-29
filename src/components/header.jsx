@@ -1,6 +1,5 @@
 import "./header.scss";
 import { Link } from "react-router-dom";
-import { auth } from "../firebase/firebase.util";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import logo from "../assets/crown.svg";
@@ -8,8 +7,10 @@ import CartIcon from "./cart-icon";
 import CartDropdown from "./cart-dropdown";
 import { selectCartHidden } from "../redux/cart/cart.selectors";
 import { selectCurrentUser } from "../redux/user/user.selector";
+import { useAuth } from "../utils/use-auth";
 
 const Header = ({ currentUser, hidden }) => {
+  const auth = useAuth
   return (
     <div className="header">
       <Link className="logo-container" to="/">
@@ -23,7 +24,7 @@ const Header = ({ currentUser, hidden }) => {
           CONTACT
         </Link>
         {currentUser ? (
-          <div className="option" onClick={() => auth.signOut()}>
+          <div className="option" onClick={() => auth.signout()}>
             SIGN OUT
           </div>
         ) : (
